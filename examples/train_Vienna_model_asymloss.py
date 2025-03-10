@@ -1,21 +1,13 @@
-base_dir = '/media/beegfs/home/u186/u186731/ParkingSpaceDetection/'
-
-import sys # Add AsfSearch lib to path
-sys.path.insert(1, base_dir)
-
-import seg_utils as utils
-import seg_losses as losses
-import SemanticSegmentation as Seg
-import geoimage_dataset as geoimage
-import geometry_utils
-import kornia
+import code.seg_utils as utils
+import code.seg_losses as losses
+import code.SemanticSegmentation as Seg
 
 import lightning.pytorch as pl
 import torch, torchmetrics
 import numpy as np
 import os
 import segmentation_models_pytorch as smp
-from seg_utils import SegmentationTransforms
+from code.seg_utils import SegmentationTransforms
 
 np.random.seed(69)
 torch.manual_seed(69)

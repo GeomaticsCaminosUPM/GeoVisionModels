@@ -1,40 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
-Created on Nov 17 12:48:36 2021
+Modified version of https://github.com/Nacriema/Loss-Functions-For-Semantic-Segmentation (@author: Nacriema)
 
-@author: Nacriema
-
-Refs:
-
-I build the collection of loss that used in Segmentation Task, beside the Standard Loss provided by Pytorch, I also
-implemented some loss that can be used to enhanced the training process.
-
-For me: Loss function is computed by comparing between probabilities, so in each Loss function if we pass logit as input
-then we should convert them into probability. One-hot encoding also a form of probability.
-
-For testing purpose, we should crete ideal probability for compare them. Then I give the loss function option use soft
-max or not.
-
-May be I need to convert each function inside the forward pass to the function that take the input and target as softmax
-probability, inside the forward pass we just convert the logits into it
-
-
-Should use each function, because most other functions like Exponential Logarithmic Loss use the result of the defined
-function above for compute.
-
-Difference between BCELoss and CrossEntropy Loss when consider with mutiple classification (n_classes >= 3):
-    - When I'm reading about the fomular of CrossEntropy Loss for multiple class case, then I see the loss just "inclue" the t*ln(p) part, but not the (1 - t)ln(1 - p)
-    for the "background" class. Then it can not "capture" the properties between each class with the background, just between each class together. 
-    - Then I'm reading from this thread https://github.com/ultralytics/yolov5/issues/5401, the author give me the same idea. 
-
+https://github.com/bermanmaxim/LovaszSoftmax
 
 Reference papers: 
     * https://arxiv.org/pdf/2006.14822.pdf
-
 """
-#from __future__ import annotations
 
 import torch
 from torch.nn import BCEWithLogitsLoss, CrossEntropyLoss, BCELoss
@@ -53,9 +24,6 @@ import torch
 from torch import Tensor, nn
 
 from kornia.core.check import KORNIA_CHECK, KORNIA_CHECK_IS_TENSOR, KORNIA_CHECK_SHAPE
-
-# based on:
-# https://github.com/bermanmaxim/LovaszSoftmax
 
 
 _EPSILON = 1e-8

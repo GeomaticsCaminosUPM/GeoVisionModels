@@ -7,7 +7,7 @@ import torch, torchmetrics
 import numpy as np
 import os
 import segmentation_models_pytorch as smp
-from seg_utils import SegmentationTransforms
+from code.seg_utils import SegmentationTransforms
 
 np.random.seed(69)
 torch.manual_seed(69)

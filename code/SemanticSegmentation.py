@@ -75,7 +75,7 @@ def load_from_checkpoint(model_log_folder,model,loss=None,accuracy=None,remove=T
 
 
 def geoimage_test(output_folder:str,test_datamodule,model,clean_func=None, overlap = 0, print_progress:int = 10):
-    import geometry_utils
+    from . import geometry_utils
     import geoimage_dataset as geoimage 
     import os 
     import warnings

@@ -348,7 +348,7 @@ class SegDataset(Dataset):
             return self.data_to_torch(_X)
         
     def translate(self,Y): 
-        import seg_utils 
+        from . import seg_utils 
         return seg_utils.translate_mask(Y,self.translate_labels,values = None)
     
 
@@ -450,7 +450,7 @@ class SegDataModule(pl.LightningDataModule):
         self.test_transforms = copy.copy(test_transforms)
 
         if get_countmatrix or balanced_inds or min_num_classes > 1:
-            import seg_utils
+            from . import seg_utils
             import numpy as np
 
             self2 = copy.deepcopy(self)
@@ -937,7 +937,7 @@ def get_parkingPublicPrivate_test_datamodule(img_dir:str,test_folders="",img_fol
 def get_Dubai_datamodule(data_dir: str):
     import os
     import ntpath
-    import seg_utils as utils
+    from . import seg_utils as utils
 
     num_classes = 6
     ignore_index = 5

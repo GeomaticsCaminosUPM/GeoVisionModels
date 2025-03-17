@@ -74,9 +74,52 @@ def load_from_checkpoint(model_log_folder,model,loss=None,accuracy=None,remove=T
                                model=model,accuracy=accuracy,loss=loss), best_epoch
 
 
+def save_geoarray(arr, output_path, bounds, driver = "JPEG",dtype='uint8'):
+    # driver available here https://gdal.org/drivers/raster/index.html
+
+    import rasterio
+    import numpy as np
+
+    arr = np.array(arr)
+
+    # Extract the GeoSeries bounds
+    crs = bounds.crs
+    bounds = bounds.total_bounds
+    minx,miny,maxx,maxy = bounds
+    
+    if len(arr.shape) == 2:
+        arr = np.reshape(arr,(1,arr.shape[0],arr.shape[1]))
+        
+    if len(arr.shape) == 3:
+        n_bands = arr.shape[0]
+        y_shape = arr.shape[1]
+        x_shape = arr.shape[2]
+    else:
+        raise Exception(f"shape of array is {arr.shape} which is incompatible with (n_bands,x_shape,y_shape)")
+
+    # Calculate the pixel size
+    x_pixel_size = (bounds[2] - bounds[0]) / x_shape
+    y_pixel_size = (bounds[3] - bounds[1]) / y_shape
+
+    # Create the transformation
+    transform = rasterio.transform.from_bounds(minx, miny, maxx, maxy, x_shape, y_shape)
+
+    # Create the GeoTIFF file
+    with rasterio.open(
+        output_path,
+        'w',
+        driver=driver,
+        height=y_shape,
+        width=x_shape,
+        count=n_bands,  # Number of bands (RGB)
+        dtype=dtype,
+        crs=crs,
+        transform=transform,
+    ) as dst:
+        dst.write(arr)   
+        
 def geoimage_test(output_folder:str,test_datamodule,model,clean_func=None, overlap = 0, print_progress:int = 10):
     from . import geometry_utils
-    import geoimage_dataset as geoimage 
     import os 
     import warnings
 
@@ -119,7 +162,7 @@ def geoimage_test(output_folder:str,test_datamodule,model,clean_func=None, overl
             name = name.replace(".jpg", ".png")
             name = name.replace("image","mask")
 
-            geoimage.save_geoarray(y,name,bounds=bounds,driver="PNG")
+            save_geoarray(y,name,bounds=bounds,driver="PNG")
 
             if print_progress == 0 or print_progress == 1:
                 print(f"model output saved as {name}. {round(i*100/len(test_image_paths),ndigits=2)} % done")
